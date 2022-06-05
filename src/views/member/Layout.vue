@@ -1,6 +1,6 @@
 <template>
-    <nav>顶</nav>
-     
+    <AppNavbar />
+
     <header>头</header>
 
     <div class="main">
@@ -11,9 +11,13 @@
 </template>
 
 <script>
-    export default {
-        name: 'Layout'
-    }
+import AppNavbar from '../../components/app-navbar.vue'
+export default {
+  name: 'Layout',
+  components: {
+    AppNavbar
+}
+}
 </script>
 
 <style lang="scss" scoped>

@@ -1,15 +1,16 @@
 <template>
-    <div>
+    <div class="container">
        HomePageeee
     </div>
 </template>
-
 <script>
-    export default {
-        name: 'HomePage'
-    }
+export default {
+  name: 'HomePage'
+}
 </script>
 
-<style lang="scss" scoped>
-
+<style lang="less" scoped>
+.container {
+   .hoverShadow();
+}
 </style>

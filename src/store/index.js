@@ -11,10 +11,10 @@ export default createStore({
     cart,
     category
   },
-    plugins: [
-        createPersistedstate({
-          key: 'erabbit-client-pc-store',
-          paths: ['user', 'cart']
-        })
-      ]
+  plugins: [
+    createPersistedstate({
+      key: 'erabbit-client-pc-store',
+      paths: ['user', 'cart']
     })
+  ]
+})
