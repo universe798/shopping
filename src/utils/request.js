@@ -2,7 +2,7 @@ import axios from 'axios'
 import store from '@/store'
 import router from '@/router'
 
-export const baseURL = 'http://pcapi-xiaotuxinan-front-devtest.itheima.net'
+export const baseURL = 'http://pcapi-xiaotuxian-front-devtest.itheima.net/'
 // 创建一个新的axios实例
 const instance = axios.create({
   baseURL,
@@ -12,7 +12,7 @@ const instance = axios.create({
 instance.interceptors.request.use(config => {
   const { profile } = store.state.user
   if (profile.token) {
-    config.headers.Authorization = 'Bearer ${profile.token'
+    config.headers.Authorization = `Bearer ${profile.token}`
   }
   return config
 }, err => {
