@@ -13,6 +13,7 @@ import AppNavbar from '../../components/app-navbar.vue'
 import AppHeader from '../../components/app-header.vue'
 import AppFooter from '../../components/app-footer.vue'
 import AppHeaderSticky from '../../components/app-header-sticky.vue'
+import home from '../home/index.vue'
 import { useStore } from 'vuex'
 export default {
   name: 'Layout',
@@ -20,7 +21,8 @@ export default {
     AppNavbar, 
     AppHeader,
     AppFooter,
-    AppHeaderSticky
+    AppHeaderSticky,
+    home
 },
 //获取下分类数据
 setup () {
@@ -31,8 +33,5 @@ setup () {
 </script>
 
 <style lang="less" scoped>
-   .main{
-       height: 3000px;
-       width:  100%
-   }
+  
 </style>

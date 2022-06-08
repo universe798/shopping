@@ -1,11 +1,19 @@
 <template>
     <div class="container">
-       HomePageeee
+      <!-- //首页入口 -->
+      <div class="home-entry">
+         <HomeCategory />
+      </div>
     </div>
 </template>
+
 <script>
+import HomeCategory from './components/home-category.vue'
 export default {
-  name: 'HomePage'
+  name: 'HomePage',
+  components: {
+    HomeCategory
+  }
 }
 </script>
 

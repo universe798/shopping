@@ -12,13 +12,18 @@
 </template>
 
 <script>
-import { onMounted } from 'vue'
-import { ref } from 'vue'
+/* import { onMounted } from 'vue'
+import { ref } from 'vue' */
+import {useWindowScroll} from '@vueuse/core'
 import AppHeaderNav from './app-header-nav'
 export default {
   name: 'AppHeaderSticky',
   components: { AppHeaderNav },
   setup () {
+      const { y } = useWindowScroll()
+      return {y}
+  }
+ /*  setup () {
       //记录y轴卷曲的高度
      const y = ref(0)
      //当你页面滚动的时候更新它
@@ -29,7 +34,7 @@ export default {
          }
      })
     return {y}
-  }
+  } */
 }
 </script>
 

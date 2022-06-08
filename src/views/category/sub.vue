@@ -1,5 +1,5 @@
 <template>
-    <div class="sub-caragroy"> subCategory
+    <div class="sub-caragroy"> subCategor
     </div>
 </template>
 
