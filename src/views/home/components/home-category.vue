@@ -11,6 +11,10 @@
             >{{ sub.name }}</RouterLink
           >
         </template>
+        <template v-else>
+           <XtxSkeleton width="60px" height="18px" bg="rgba(255,255,255,0.2)" style="margin-right:5px" />
+           <XtxSkeleton height="18px" width="50px" bg="rgba(255,255,255,0.2)" />
+        </template>
       </li>
     </ul>
     <!-- 弹层 -->
@@ -50,40 +54,40 @@ import { reactive } from 'vue'
 import { computed,ref } from 'vue'
 import { useStore } from 'vuex'
 import {findBrand} from '@/api/home'
+import XtxSkeleton from '@/components/library/xtx-skeleton.vue'
 
 export default {
-  name: 'HomeCategory',
-  setup () {
-    const store = useStore ()
-    const brand = reactive({
-      id: 'brand',
-      name: '品牌',
-      children: [{id: 'brand-children', name: '品牌推荐'}]
-    })
-    const menuList = computed(() => {
-      const list = store.state.category.list.map(item => {
-        return{
-          id: item.id,
-          name: item.name,
-          children: item.children && item.children.slice(0,2),
-          goods: item.goods,
-          brands: []
-        }
-      })
-      list.push(brand)
-      return list
-    })
-   const categoryId = ref(null)
-    const currCategory = computed(() => {
-      return menuList.value.find(item => item.id === categoryId.value)
-    })
-    
-    findBrand().then(data => {
-      brand.brands =data.result
-    })
-    return {menuList, categoryId, currCategory} 
-  }
-
+    name: "HomeCategory",
+    setup() {
+        const store = useStore();
+        const brand = reactive({
+            id: "brand",
+            name: "品牌",
+            children: [{ id: "brand-children", name: "品牌推荐" }]
+        });
+        const menuList = computed(() => {
+            const list = store.state.category.list.map(item => {
+                return {
+                    id: item.id,
+                    name: item.name,
+                    children: item.children && item.children.slice(0, 2),
+                    goods: item.goods,
+                    brands: []
+                };
+            });
+            list.push(brand);
+            return list;
+        });
+        const categoryId = ref(null);
+        const currCategory = computed(() => {
+            return menuList.value.find(item => item.id === categoryId.value);
+        });
+        findBrand().then(data => {
+            brand.brands = data.result;
+        });
+        return { menuList, categoryId, currCategory };
+    },
+    components: { XtxSkeleton }
 }
 </script>
 
@@ -178,6 +182,7 @@ export default {
               }
             }
           }
+          
         }
       }
       /* 品牌样式 */
@@ -207,4 +212,15 @@ export default {
     }
   }
 }
+  .xtx-skeleton {
+        animation: fade 1s linear infinite alternate;
+      }
+      @keyframes fade {
+        from {
+          opacity: 0.2;
+        }
+        to {
+          opacity: 1;
+        }
+      }
 </style>
