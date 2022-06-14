@@ -9,7 +9,7 @@ export const findBanner = () => {
    return request('/home/banner','get')
 }
 
-/* return promise 获取广告区轮播图 */
+/* return promise 获取新鲜好物 */
 export const findNew = () => {
    return request('/home/new','get')
 }
@@ -17,4 +17,14 @@ export const findNew = () => {
 /* return promise 获取人气推荐 */
 export const findHot = () => {
    return request('/home/hot','get')
+}
+
+/* return promise 获取产品 */
+export const findGoods = () => {
+   return request('/home/goods','get')
+}
+
+/* return promise 获取产品 */
+export const findSpecial = () => {
+   return request('/home/special','get')
 }
