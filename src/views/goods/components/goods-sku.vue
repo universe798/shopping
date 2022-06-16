@@ -35,7 +35,6 @@ const getPathMap = (skus) => {
         // 给pathMap设置数据
         if (pathMap[key]){
           pathMap[key].push(sku.id)
-          console.log(222222,pathMap[key])
         }else {
           pathMap[key] = [sku.id]
         }
@@ -70,6 +69,16 @@ const updateDisabledStatus = (specs, pathMap) => {
     })
    })
 }
+//默认选中
+const initDefaultSelected  = (goods,skuId) => {
+     //找出sku信息
+     //遍历每个按钮，按钮值和sku记录的值相同则选中
+     const sku = goods.skus.find(sku => sku.id === skuId)
+     goods.specs.forEach((item,i) => {
+      const val =  item.values.find(val => val.name === sku.specs[i].valueName) 
+      val.selected = true
+     })
+}
 
 export default {
   name: 'GoodsSku',
@@ -77,13 +86,20 @@ export default {
      goods:{
       type: Object,
       default: ()=>({})
+     },
+     skuId:{
+      type: String,
+      default: ''
      }
   },
-  setup (props) {
+  setup (props,{emit}) {
      const pathMap = getPathMap(props.goods.skus)
+     //根据skuId初始化选中
+     if (props.skuId) {
+      initDefaultSelected(props.goods,props.skuId)
+     }
      //组件初始化更新按钮禁用状态
      updateDisabledStatus(props.goods.specs, pathMap)
-     console.log(pathMap)
     //选中与取消选中
      const changeSku = (item,val) => {
         //当按钮禁用，阻止程序运行
@@ -99,6 +115,24 @@ export default {
         }
         //点击按钮时：更新按钮禁用状态
        updateDisabledStatus(props.goods.specs, pathMap)
+       // 将选择的sku信息通知父组件
+       // 选择完整的sku组合按钮，提交父组件
+       // 选择不完整，提交空对象给父组件
+       const validselectedValues = getSelectedValues(props.goods.specs).filter(v=>v)
+       if (validselectedValues.length === props.goods.specs.length) {
+           const skuIds = pathMap[validselectedValues.join(spliter)]
+           const sku = props.goods.skus.find(sku => sku.id === skuIds[0])
+           emit('change',{
+            skuId: sku.id,
+            price: sku.price,
+            oldPrice: sku.oldPrice,
+            inventory: sku.inventory,
+            //拼接成字符串
+            specsText: sku.specs.reduce((p,c)=>`${p}${c.name}:${c.valueName}`,'').trim()
+           })
+       }else{
+         emit('change',{})
+       }
 
       }
   return { changeSku}
