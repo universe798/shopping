@@ -12,7 +12,7 @@
     </dl>
     <dl>
       <dt>配送</dt>
-      <dd>至 </dd>
+      <dd>至 <XtxCity @change="changeCity" :fullLocation="fullLocation" /></dd>
     </dl>
     <dl>
       <dt>服务</dt>
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import {ref} from 'vue'
 export default {
   name: 'GoodName',
   props: {
@@ -34,7 +35,34 @@ export default {
         type: Object,
         default: () => ({})
     }
+  },
+  setup (props) {
+    //没登陆默认数据
+    const provinceCode = ref('110000')
+    const cityCode = ref('119900')
+    const countyCode = ref('110101')
+    const fullLocation = ref('北京市 市辖区 东城区')
+    //登录状态下取出用户默认地址给数据赋值
+    if (props.goods.userAddress){
+      const defaultAddress = props.goods.userAddress.find(item => item.isDefault === 1)
+      if (defaultAddress) {
+        provinceCode.value = defaultAddr.provinceCode
+        cityCode.value = defaultAddr.cityCode
+        countyCode.value = defaultAddr.countyCode
+        fullLocation.value = defaultAddr.fullLocation
+      }
+    }
+    //城市选中事件处理函数
+    const changeCity = (result) => {
+        provinceCode.value = result.provinceCode
+        cityCode.value = result.cityCode
+        countyCode.value = result.countyCode
+        fullLocation.value = result.fullLocation
+      }
+    
+    return {fullLocation,changeCity}
   }
+ 
 }
 </script>
 
