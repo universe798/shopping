@@ -7,7 +7,7 @@
             <li><a href="javascript:;">退出登录</a></li>
         </template>
         <template  v-else>
-            <li><a href="javascript:;">请先登录</a></li>
+            <li><RouterLink to="/login">请先登录</RouterLink></li>
             <li><a href="javascript:;">免费注册</a></li>
         </template>
         
@@ -23,16 +23,17 @@
 <script>
 import { computed } from 'vue'
 import { useStore } from 'vuex'
+undefined
 
 export default {
-  name: 'AppNavnav',
-  setup () {
-     const store = useStore()
-     const profile = computed(() => {
-         return store.state.user.profile
-     })
-     return {profile}
-  }
+    name: "AppNavnav",
+    setup() {
+        const store = useStore();
+        const profile = computed(() => {
+            return store.state.user.profile;
+        });
+        return { profile };
+    }
 }
 </script>
 <style scoped lang="less">
