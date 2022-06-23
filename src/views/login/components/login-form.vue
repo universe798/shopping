@@ -46,7 +46,9 @@
           <div class="input">
             <i class="iconfont icon-code"></i>
             <Field :class="{error:errors.code}" v-model="form.code" name="code" type="text" placeholder="请输入验证码" />
-            <span class="code">发送验证码</span>
+            <span  @click="send()" class="code">
+              {{time===0?'发送验证码':`${time}秒后发送`}}
+            </span>
           </div>
           <div class="error" v-if="errors.code">
           <i class="iconfont icon-warning" />
@@ -81,8 +83,13 @@
 
 <script>
 import {Form ,Field} from 'vee-validate'
-import {reactive, ref,watch} from 'vue'
+import { onMounted, onUnmounted, reactive, ref,watch} from 'vue'
 import schema from '@/utils/vee-validate.js'
+import {userAccountLogin, userMobileLogin, userMobileLoginMsg} from '@/api/user'
+import { useStore } from 'vuex'
+import { useRoute, useRouter } from 'vue-router'
+import Message from '@/components/library/Message'
+import { useIntervalFn } from '@vueuse/core'
     export default {
         components:{Form,Field},
         name:'LoginForm',
@@ -119,20 +126,86 @@ import schema from '@/utils/vee-validate.js'
                 // Form组件提供了一个 resetForm 函数清除校验结果
                 formCom.value.resetForm()
                 })
+                
+                // const {proxy} = getCurrentInstance()
+                const store = useStore()
+                const router = useRouter()
+                const route = useRoute ()
 
-                //点击登录对整体表单进行效验
-                const login =async () => {
-                    //Form组件提供validete函数为整体表单进行效验，返回promise
-                    const valid = await formCom.value.validate()
-                    console.log(vaild)
-                }
-
-           return {isMsgLogin,form ,schema: mySchema,formCom,login}
+                const login = async () => {
+      // Form组件提供了一个 validate 函数作为整体表单校验，当是返回的是一个promise
+      const valid = await formCom.value.validate()
+      if (valid) {
+        try {
+          let data = null
+          if (isMsgLogin.value) {
+            // **手机号登录
+            // 2.1. 准备一个API做手机号登录
+            // 2.2. 调用API函数
+            // 2.3. 成功：存储用户信息 + 跳转至来源页或者首页 + 消息提示
+            // 2.4. 失败：消息提示
+            const { mobile, code } = form
+            data = await userMobileLogin({ mobile, code })
+          } else {
+            // **帐号登录
+            // 1. 准备一个API做帐号登录
+            // 2. 调用API函数
+            // 3. 成功：存储用户信息 + 跳转至来源页或者首页 + 消息提示
+            // 4. 失败：消息提示
+            const { account, password } = form
+            data = await userAccountLogin({ account, password })
+          }
+          // 存储用户信息
+          const { id, account, avatar, mobile, nickname, token } = data.result
+          store.commit('user/setUser', { id, account, avatar, mobile, nickname, token })
+          store.dispatch('cart/mergeCart').then(() => {
+            // 进行跳转
+            router.push(route.query.redirectUrl || '/')
+            // 成功消息提示
+            Message({ type: 'success', text: '登录成功' })
+          })
+        } catch (e) {
+          // 失败提示
+          if (e.response.data) {
+            Message({ type: 'error', text: e.response.data.message || '登录失败' })
+          }
+        }
+      }
+    }
+                
+          //useIntervalFn（回调函数，执行间隔，是否立即开启）
+          const time = ref(0)
+    const { pause, resume, isActive } = useIntervalFn(() => {
+      time.value--
+      if (time.value <= 0) {
+        pause()
+      }
+    }, 1000, false)
+    onUnmounted(() => {
+      pause()
+    })
+          const send = async () => {
+      const valid = mySchema.mobile(form.mobile)
+      if (valid === true) {
+        // 通过
+        if (time.value === 0) {
+        // 没有倒计时才可以发送
+          await userMobileLoginMsg(form.mobile)
+          Message({ type: 'success', text: '发送成功' })
+          time.value = 60
+          resume()
+        }
+      } else {
+        // 失败，使用vee的错误函数显示错误信息 setFieldError(字段,错误信息)
+        formCom.value.setFieldError('mobile', valid)
+      }
+    }
+           return {isMsgLogin,form ,schema: mySchema,formCom,login,send,time}
         }
     }
 </script>
 
-<style lang="less" scoped>
+<style scoped lang="less">
 // 账号容器
 .account-box {
   .toggle {
@@ -234,4 +307,3 @@ import schema from '@/utils/vee-validate.js'
   }
 }
 </style>
-

@@ -5,6 +5,7 @@
 // import XtxBread from './xtx-bread.vue'
 // import XtxBreadItem from './xtx-bread-item.vue'
 // 批量注册组件
+import Message from "./Message"
 const importFn = require.context('./',false,/\.vue$/)
 
 export default {
@@ -23,6 +24,9 @@ export default {
    
     
     defineDirective(app)
+    //定义原形函数
+    app.config.globalProperties.$message = Message
+
     }
 }
 
